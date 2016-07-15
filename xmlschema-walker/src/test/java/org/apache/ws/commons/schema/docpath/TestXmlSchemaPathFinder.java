@@ -43,9 +43,11 @@ import org.apache.ws.commons.schema.walker.XmlSchemaWalker;
 import org.apache.ws.commons.schema.walker.XmlSchemaTypeInfo;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+@Ignore
 public class TestXmlSchemaPathFinder {
 
     private static final String TESTSCHEMA_NS = "http://avro.apache.org/AvroTest";

@@ -7,13 +7,14 @@
   </parent>
   <artifactId>xmlschema-walker</artifactId>
   <name>xmlschema-walker</name>
+  <version>2.2.1-connect</version>
   <description>Code to walk an XML Schema and confirm an XML Document conforms to it.</description>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
       <groupId>org.apache.ws.xmlschema</groupId>
       <artifactId>xmlschema-core</artifactId>
-      <version>${project.version}</version>
+      <version>2.2.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
