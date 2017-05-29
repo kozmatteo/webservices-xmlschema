@@ -29,8 +29,21 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.ws.commons.schema.*;
-import org.apache.ws.commons.schema.constants.Constants;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAll;
+import org.apache.ws.commons.schema.XmlSchemaAllMember;
+import org.apache.ws.commons.schema.XmlSchemaAny;
+import org.apache.ws.commons.schema.XmlSchemaChoice;
+import org.apache.ws.commons.schema.XmlSchemaChoiceMember;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaGroup;
+import org.apache.ws.commons.schema.XmlSchemaGroupParticle;
+import org.apache.ws.commons.schema.XmlSchemaGroupRef;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
+import org.apache.ws.commons.schema.XmlSchemaType;
 
 /**
  * Walks an {@link XmlSchema} from a starting {@link XmlSchemaElement},
@@ -45,11 +58,11 @@ public final class XmlSchemaWalker {
     private final Map<QName, List<XmlSchemaElement>> elemsBySubstGroup;
     private final Map<String, XmlSchema> schemasByNamespace;
     private final Map<QName, XmlSchemaScope> scopeCache;
-    private final Map<QName, Set<QName>> visitedElementsAndTypes;
+    private final Set<QName> visitedElements;
 
     /**
      * Initializes the {@link XmlSchemaWalker} with the
-     * {@link XmlSchemaCollection} to reference when following an
+     * {@link XmlScheamCollection} to reference when following an
      * {@link XmlSchemaElement}.
      */
     public XmlSchemaWalker(XmlSchemaCollection xmlSchemas) {
@@ -79,7 +92,7 @@ public final class XmlSchemaWalker {
         }
 
         scopeCache = new HashMap<QName, XmlSchemaScope>();
-        visitedElementsAndTypes = new java.util.HashMap<QName, Set<QName>>();
+        visitedElements = new java.util.HashSet<QName>();
         userRecognizedTypes = null;
     }
 
@@ -131,7 +144,7 @@ public final class XmlSchemaWalker {
      */
     public void clear() {
         scopeCache.clear();
-        visitedElementsAndTypes.clear();
+        visitedElements.clear();
     }
 
     /**
@@ -197,8 +210,7 @@ public final class XmlSchemaWalker {
 
         XmlSchemaType schemaType = element.getSchemaType();
         if (schemaType == null) {
-            final QName typeQName = element.getSchemaTypeName() != null ?
-                element.getSchemaTypeName() : Constants.XSD_ANYTYPE;
+            final QName typeQName = element.getSchemaTypeName();
             if (typeQName != null) {
                 XmlSchema schema = schemasByNamespace.get(typeQName.getNamespaceURI());
                 schemaType = schema.getTypeByName(typeQName);
@@ -221,21 +233,16 @@ public final class XmlSchemaWalker {
             final XmlSchemaTypeInfo typeInfo = scope.getTypeInfo();
 
             // 2. for each visitor, call visitor.startElement(element, type);
-            final boolean previouslyVisited = (!element.isAnonymous() && visitedElementsAndTypes.containsKey(element
-                .getQName()) && visitedElementsAndTypes.get(element.getQName()).contains(schemaType.getQName()));
+            final boolean previouslyVisited = false;
+//                (!element.isAnonymous() && visitedElementsAndTypes.containsKey(element
+//                .getQName()) && visitedElementsAndTypes.get(element.getQName()).contains(schemaType.getQName()));
 
             for (XmlSchemaVisitor visitor : visitors) {
                 visitor.onEnterElement(element, typeInfo, previouslyVisited);
             }
 
             if (!element.isAnonymous() && !previouslyVisited) {
-                if (visitedElementsAndTypes.containsKey(element.getQName())) {
-                    visitedElementsAndTypes.get(element.getQName()).add(schemaType.getQName());
-                } else {
-                    Set<QName> qNames = new HashSet<QName>();
-                    qNames.add(schemaType.getQName());
-                    visitedElementsAndTypes.put(element.getQName(), qNames);
-                }
+                visitedElements.add(element.getQName());
             }
 
             // If we already visited this element, skip the attributes and

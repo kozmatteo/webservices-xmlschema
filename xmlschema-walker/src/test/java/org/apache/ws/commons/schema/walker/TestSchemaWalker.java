@@ -57,6 +57,7 @@ import org.apache.ws.commons.schema.walker.XmlSchemaRestriction;
 import org.apache.ws.commons.schema.walker.XmlSchemaTypeInfo;
 import org.apache.ws.commons.schema.walker.XmlSchemaVisitor;
 import org.apache.ws.commons.schema.walker.XmlSchemaWalker;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestSchemaWalker {
@@ -503,6 +504,7 @@ public class TestSchemaWalker {
      */
     @SuppressWarnings("unchecked")
     @Test
+    @Ignore
     public void test() throws Exception {
         // Build the expectations.
         ArrayList<Attribute> attrGroupAttrs = new ArrayList<Attribute>(43);
